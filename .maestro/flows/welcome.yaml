@@ -1,0 +1,13 @@
+# Welcome ekranı smoke test'i.
+# Uygulamayı clean state'te açar, welcome ekranındaki temel elemanları doğrular.
+appId: com.muzikapp.app
+tags:
+  - smoke
+  - auth
+---
+- launchApp:
+    clearState: true
+    clearKeychain: true
+- assertVisible: "Müzik App"
+- assertVisible: "Giriş Yap"
+- assertVisible: "Kayıt Ol"

@@ -1,0 +1,12 @@
+# Maestro proje konfigürasyonu.
+# Tüm flow'lar bu config'i otomatik alır.
+# Çalıştırma: maestro test .maestro/flows/<flow>.yaml
+# Veya: maestro test .maestro/flows/  (tüm flow'ları sırayla)
+
+appId: com.muzikapp.app
+
+tags:
+  - smoke
+
+# Not: Android emülatörde dev build (eas build --profile development) ile çalışır.
+# Expo Go ile uyumsuz; çünkü Expo Go ayrı bir appId kullanır (host.exp.exponent).

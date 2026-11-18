@@ -1,0 +1,75 @@
+{
+  "expo": {
+    "name": "Müzik App",
+    "slug": "muzik-app",
+    "version": "1.0.0",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0
+    },
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "scheme": "muzikapp",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0f0f0f"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.muzikapp.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Profil fotoğrafı için kamera erişimi gereklidir.",
+        "NSPhotoLibraryUsageDescription": "Profil ve şarkı fotoğrafları için galeri erişimi gereklidir.",
+        "NSMicrophoneUsageDescription": "Şarkı pratiklerinizi kaydetmek için mikrofon erişimi gereklidir."
+      }
+    },
+    "android": {
+      "package": "com.muzikapp.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#0f0f0f",
+        "foregroundImage": "./assets/icon.png"
+      },
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "RECORD_AUDIO",
+        "POST_NOTIFICATIONS"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Profil fotoğrafı seçmek için galeri erişimi gereklidir."
+        }
+      ],
+      "expo-sharing",
+      "expo-asset",
+      "@sentry/react-native",
+      "expo-image",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#6C63FF"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

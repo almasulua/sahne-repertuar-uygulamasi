@@ -1,0 +1,29 @@
+# Login form validasyon flow'u.
+# Welcome → Login → boş submit → email validation hatası gösterilmeli.
+appId: com.muzikapp.app
+tags:
+  - smoke
+  - auth
+---
+- launchApp:
+    clearState: true
+- assertVisible: "Giriş Yap"
+- tapOn: "Giriş Yap"
+# Login ekranı: form alanları görünür
+- assertVisible: "E-posta"
+- assertVisible: "Şifre"
+# Geçersiz email gir, submit'i tetikle, validation hatasını bekle
+- tapOn:
+    text: "E-posta"
+    index: 0
+- inputText: "gecersiz-email"
+- tapOn:
+    text: "Şifre"
+    index: 0
+- inputText: "kisa"
+- tapOn:
+    text: "Giriş Yap"
+    index: 1   # form üst butonu yerine alttaki submit
+# Zod hata mesajlarından en az birini bekle (auth schema'da tanımlı)
+- assertVisible:
+    text: ".*(geçerli|email|e-posta|şifre).*"

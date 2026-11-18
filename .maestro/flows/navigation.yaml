@@ -1,0 +1,22 @@
+# Auth ekranları arası navigasyon flow'u.
+# Welcome → Register → geri Welcome → Login → geri Welcome akışı.
+appId: com.muzikapp.app
+tags:
+  - smoke
+  - navigation
+---
+- launchApp:
+    clearState: true
+- assertVisible: "Giriş Yap"
+- tapOn: "Kayıt Ol"
+- assertVisible: "Kayıt Ol"
+- assertVisible: "E-posta"
+# Geri dön
+- tapOn: "Geri"
+- assertVisible: "Müzik App"
+- tapOn: "Giriş Yap"
+- assertVisible: "E-posta"
+- assertVisible: "Şifre"
+# Geri dön
+- tapOn: "Geri"
+- assertVisible: "Müzik App"
