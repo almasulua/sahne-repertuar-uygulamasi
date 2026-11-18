@@ -63,6 +63,9 @@ React Native + Expo + Supabase.
 - [x] **Skeleton loader'lar** — `Skeleton`, `SkeletonList`, `SongRowSkeleton`, `GroupCardSkeleton`, `ActivityRowSkeleton` bileşenleri (`react-native-reanimated` shimmer); repertuar, gruplar, grup aktivite ve kullanıcı arama ekranlarında entegre
 - [x] **Animated transitions** — Stack varsayılan `slide_from_right` (220ms); `(auth)` ve `invite/[token]` fade; `(tabs)` none; `song/[songId]` modal/`slide_from_bottom`
 
+### Faz 4.8 — Sosyal Giriş (Kod tamamlandı, Supabase ayarı gerekli)
+- [x] **Google / Apple ile giriş** — [authApi.signInWithOAuth](src/api/auth.ts): Supabase OAuth + PKCE (`flowType: 'pkce'`), `expo-web-browser` `openAuthSessionAsync` ile sistem tarayıcısında giriş, dönüşte `?code=` → `exchangeCodeForSession`. Vazgeçilirse sessizce `null`. [SocialAuthButtons](src/components/auth/SocialAuthButtons.tsx) Welcome / Giriş / Kayıt ekranlarında; Apple butonu yalnızca iOS'ta. [app/auth/callback.tsx](app/auth/callback.tsx) deep link'in router'a düştüğü Android cihazlarda ana akışa döndürür. Kurulum adımları: aşağıda "Google / Apple Girişi Kurulumu"
+
 ### Faz 4.6 — Teknik Altyapı (Kısmen Tamamlandı)
 - [x] **Unit test kapsamı genişletildi** — `chordLookup.test.ts` (50 test: parseChordForPiano kalite mapping, getPianoKeys, lookupChord, isKnownChord, INTERVALS/ROOT_NAMES veri bütünlüğü), `chordDetector.test.ts` (18 test: isChordLine, detectChords benzersizleştirme, classifyLines), `htmlToChordPro.test.ts` (18 test: stripHtml entity/tag/case-insensitive, convertToChordPro birleştirme/pozisyon koruma); **toplam 181 test geçiyor** (95'ten 181'e)
 - [x] **Error Boundary + global JS error handler** — [ErrorBoundary.tsx](src/components/ErrorBoundary.tsx) sınıf bileşeni: render hatasını yakalar, Sentry'ye `componentStack` ile bildirir, friendly "Yeniden Dene" ekranı (dev'de stack preview, production'da minimal mesaj); root layout `<ErrorBoundary>` ile sarıldı. [errorHandler.ts](src/lib/errorHandler.ts) `installGlobalErrorHandler` — `ErrorUtils.setGlobalHandler` ile RN JS engine global hatalarını + `addEventListener('unhandledrejection', …)` ile yakalanmamış promise reject'lerini Sentry'ye iletir; orijinal handler'ı koruyarak dev RedBox bozulmaz
@@ -106,23 +109,25 @@ Migration'lar `supabase/migrations/` altında sıralı dosyalar halinde. Supabas
 | # | Dosya | Açıklama | Durum |
 |---|-------|----------|-------|
 | 001 | `001_initial_schema.sql` | Temel tablolar (users, groups, songs, messages) | ✅ Uygulandı |
-| 002 | `002_setlists.sql` | Setlists + setlist_items tabloları + RLS | ⬜ Uygulanacak |
-| 003 | `003_polls.sql` | Polls + poll_votes tabloları + RLS | ⬜ Uygulanacak |
-| 004 | `004_events.sql` | Events + event_rsvps tabloları + RLS | ⬜ Uygulanacak |
-| 005 | `005_notifications.sql` | Notifications tablosu, users'a push_token | ⬜ Uygulanacak |
+| 002 | `002_setlists.sql` | Setlists + setlist_items tabloları + RLS | ✅ Uygulandı |
+| 003 | `003_polls.sql` | Polls + poll_votes tabloları + RLS | ✅ Uygulandı |
+| 004 | `004_events.sql` | Events + event_rsvps tabloları + RLS | ✅ Uygulandı |
+| 005 | `005_notifications.sql` | Notifications tablosu, users'a push_token | ✅ Uygulandı |
 | 006 | `006_fix_group_rls.sql` | Grup SELECT policy düzeltmesi | ✅ Uygulandı |
 | 007 | `007_message_type_poll.sql` | Messages type'a 'poll' ekleme | ✅ Uygulandı |
 | 008 | `008_create_group_rpc.sql` | Grup oluşturma RPC fonksiyonu | ✅ Uygulandı |
 | 009 | `009_user_categories.sql` | Dinamik kullanıcı kategorileri | ✅ Uygulandı |
-| 010 | `010_fix_event_insert_policy.sql` | Etkinlik INSERT policy düzeltmesi | ⬜ Uygulanacak |
-| 011 | `011_setlist_part_assignments.sql` | `setlist_items.part_assignments` JSONB alanı + GIN indeksi | ⬜ Uygulanacak |
-| 012 | `012_group_activities.sql` | `group_activities` tablosu + 5 trigger fonksiyonu (song/setlist/poll/event/member) | ⬜ Uygulanacak |
-| 013 | `013_song_comments_ratings.sql` | `song_comments` + `song_ratings` tabloları, RLS, `song_rating_summary` view, `set_updated_at` trigger | ⬜ Uygulanacak |
-| 014 | `014_push_infrastructure.sql` | `pg_net` extension, `users.muted_group_ids` kolonu, `notifications` INSERT trigger'ı (edge function'ı pg_net ile çağırır) | ⬜ Uygulanacak |
-| 015 | `015_public_setlists.sql` | `setlists.is_public` + `public_slug`, slug gen trigger, anon erişim için 4 RLS policy (setlists/setlist_items/songs/groups) | ⬜ Uygulanacak |
-| 016 | `016_musician_matching.sql` | `find_musician_matches(user_id, limit)` `SECURITY DEFINER` RPC: skorlu müzisyen önerileri | ⬜ Uygulanacak |
+| 010 | `010_fix_event_insert_policy.sql` | Etkinlik INSERT policy düzeltmesi | ✅ Uygulandı |
+| 011 | `011_setlist_part_assignments.sql` | `setlist_items.part_assignments` JSONB alanı + GIN indeksi | ✅ Uygulandı |
+| 012 | `012_group_activities.sql` | `group_activities` tablosu + 5 trigger fonksiyonu (song/setlist/poll/event/member) | ✅ Uygulandı |
+| 013 | `013_song_comments_ratings.sql` | `song_comments` + `song_ratings` tabloları, RLS, `song_rating_summary` view, `set_updated_at` trigger | ✅ Uygulandı |
+| 014 | `014_push_infrastructure.sql` | `pg_net` extension, `users.muted_group_ids` kolonu, `notifications` INSERT trigger'ı (edge function'ı pg_net ile çağırır) | ⬜ **Prod'a uygulanmadı** |
+| 015 | `015_public_setlists.sql` | `setlists.is_public` + `public_slug`, slug gen trigger, anon erişim için 4 RLS policy (setlists/setlist_items/songs/groups) | ⬜ **Prod'a uygulanmadı** |
+| 016 | `016_musician_matching.sql` | `find_musician_matches(user_id, limit)` `SECURITY DEFINER` RPC: skorlu müzisyen önerileri | ✅ Uygulandı |
+| 017 | `017_security_hardening.sql` | Güvenlik: users private kolonları (email/push_token/...) REVOKE, SECURITY DEFINER fonksiyonlarına `search_path`, grup oluşturma ve eşleştirmede kimlik sahteciliği engeli | ✅ Uygulandı |
+| 018 | `018_oauth_new_user.sql` | `handle_new_user` sağlamlaştırma: kayıtta seçilen kullanıcı adı artık kullanılıyor; e-postasız OAuth kullanıcısında (Apple) kayıt patlamıyor; Google `picture` avatarı | ⬜ Uygulanacak |
 
-**Önemli:** 002–005, 010–016 uygulanmadan ilgili özellikler tam çalışmaz!
+**Önemli:** 014 uygulanmadan push bildirimleri, 015 uygulanmadan herkese açık setlist paylaşımı çalışmaz. 018, Google/Apple girişinden önce uygulanmalı. Migration'lar Studio SQL Editor'dan elle çalıştırılır — `supabase db push` kullanmayın (uzak migration geçmişi bu dosyalarla senkron değil).
 
 ---
 
@@ -195,11 +200,23 @@ Migration'lar `supabase/migrations/` altında sıralı dosyalar halinde. Supabas
 | Notifications | expo-notifications (dev build only) |
 | Persist | MMKV (dev build) / AsyncStorage (Expo Go fallback) |
 
+## Google / Apple Girişi Kurulumu
+
+Kod hazır; sağlayıcılar Supabase'de açılmadan butonlar hata verir.
+
+1. **Migration 018**'i Studio SQL Editor'dan çalıştırın.
+2. Supabase Dashboard → **Authentication → URL Configuration → Redirect URLs**'e ekleyin:
+   - `muzikapp://auth/callback` (dev/preview/production build)
+   - `exp://**` (yalnızca Expo Go ile geliştirirken)
+3. **Google:** Google Cloud Console → OAuth client (Web application) oluşturun; Authorized redirect URI: `https://<ref>.supabase.co/auth/v1/callback`. Client ID + Secret'ı Dashboard → Authentication → Providers → Google'a girin.
+4. **Apple:** Apple Developer → Services ID + Sign in with Apple key oluşturun; Return URL: `https://<ref>.supabase.co/auth/v1/callback`. Dashboard → Providers → Apple'a Services ID, Team ID, Key ID ve private key ile üretilen secret'ı girin (Apple secret'ı 6 ayda bir yenilenmeli).
+5. Yeni `expo-web-browser` native modülü eklendiği için dev/production build'ler yeniden alınmalı (Expo Go'da zaten var).
+
 ## Bilinen Sorunlar
 
 1. **expo-notifications & expo-audio**: Expo Go'da SDK 53+ sonrası çalışmıyor. Development build gerekli. Kod ikisini de Expo Go'da gracefully bypass eder.
 2. ~~**Tema toggle pasif**~~ — Çözüldü (Faz 4.1, `dark:` variant bridge).
-3. **TypeScript `never` type**: `database.types.ts` manuel stub olduğu için bazı API dosyalarında TypeScript uyarıları var. `supabase gen types typescript` ile güncellenebilir.
+3. **`database.types.ts` elle yazılmış**: Şu an `tsc` hatasız, ama tipler canlı şemadan üretilmediği için kayabilir. Proje aktifken `npx supabase gen types typescript --project-id niwyrrysjrpgxhevlavo > src/types/database.types.ts` ile yenilenmeli.
 4. **GO_BACK uyarısı**: Bazı ekranlarda `router.back()` yerine `safeBack()` helper'ı kullanılmalı (auth ekranları zaten güncellendi).
 
 ---

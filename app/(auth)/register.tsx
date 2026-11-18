@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from '../../src/components/ui/Button';
+import { SocialAuthButtons } from '../../src/components/auth/SocialAuthButtons';
 import { Input } from '../../src/components/ui/Input';
 import { registerSchema, type RegisterFormValues } from '../../src/lib/validators/authSchema';
 import { authApi } from '../../src/api/auth';
@@ -167,6 +168,8 @@ export default function RegisterScreen() {
             onPress={handleSubmit(onSubmit)}
             className="mt-2"
           />
+
+          <SocialAuthButtons showDivider />
 
           <View className="flex-row justify-center mt-6">
             <Text className="text-light-text-secondary dark:text-text-secondary text-sm">{t('auth.haveAccount')} </Text>

@@ -1,4 +1,11 @@
+import * as WebBrowser from 'expo-web-browser';
+import * as Linking from 'expo-linking';
 import { supabase } from './supabase';
+
+// Android'de auth sekmesi kapandıktan sonra bekleyen oturumu tamamlar (iOS'ta noop)
+WebBrowser.maybeCompleteAuthSession();
+
+export type OAuthProvider = 'google' | 'apple';
 import type { User, UserLevel } from '../types/user';
 
 // Güvenlik (017_security_hardening): public.users.email kolonu anon/authenticated
@@ -69,6 +76,37 @@ export const authApi = {
     });
     if (error) throw error;
     return data;
+  },
+
+  /**
+   * Google / Apple ile giriş (Supabase OAuth + PKCE).
+   * Sistem tarayıcısında sağlayıcı sayfası açılır; dönüşte `muzikapp://auth/callback?code=...`
+   * yakalanır ve kod oturuma çevrilir. Kullanıcı vazgeçerse `null` döner (hata değil).
+   * Yeni kullanıcının public.users satırı handle_new_user trigger'ı ile oluşur.
+   */
+  signInWithOAuth: async (provider: OAuthProvider) => {
+    // Expo Go'da exp://.../--/auth/callback, dev/prod build'de muzikapp://auth/callback
+    const redirectTo = Linking.createURL('auth/callback');
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: { redirectTo, skipBrowserRedirect: true },
+    });
+    if (error) throw error;
+    if (!data?.url) throw new Error('OAuth URL alınamadı');
+
+    const result = await WebBrowser.openAuthSessionAsync(data.url, redirectTo);
+    if (result.type !== 'success') return null; // iptal / kapatıldı
+
+    const { queryParams } = Linking.parse(result.url);
+    const errorDescription = queryParams?.error_description ?? queryParams?.error;
+    if (errorDescription) throw new Error(String(errorDescription));
+    const code = queryParams?.code;
+    if (typeof code !== 'string') throw new Error('OAuth dönüşünde kod yok');
+
+    const { data: sessionData, error: exchangeError } =
+      await supabase.auth.exchangeCodeForSession(code);
+    if (exchangeError) throw exchangeError;
+    return sessionData;
   },
 
   /** Çıkış */

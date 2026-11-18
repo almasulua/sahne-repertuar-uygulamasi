@@ -78,7 +78,8 @@
       "usernameInvalid": "Username can only contain letters, numbers and _",
       "loginFailed": "Login failed. Invalid email or password.",
       "registerFailed": "Registration failed. Please try again.",
-      "emailAlreadyUsed": "This email is already in use"
+      "emailAlreadyUsed": "This email is already in use",
+      "oauthFailed": "Sign-in could not be completed. Please try again."
     }
   },
   "home": {

@@ -30,6 +30,8 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: false,
+    // OAuth (Google/Apple) dönüşü ?code=... ile gelir; verifier AsyncStorage'da tutulur
+    flowType: 'pkce',
   },
 });
 

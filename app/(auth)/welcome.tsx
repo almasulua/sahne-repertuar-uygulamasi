@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from '../../src/components/ui/Button';
+import { SocialAuthButtons } from '../../src/components/auth/SocialAuthButtons';
 
 export default function WelcomeScreen() {
   const { t } = useTranslation();
@@ -37,6 +38,7 @@ export default function WelcomeScreen() {
             fullWidth
             onPress={() => router.push('/(auth)/register')}
           />
+          <SocialAuthButtons showDivider />
         </View>
       </View>
 

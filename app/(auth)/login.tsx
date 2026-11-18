@@ -10,6 +10,7 @@ import { Input } from '../../src/components/ui/Input';
 import { loginSchema, type LoginFormValues } from '../../src/lib/validators/authSchema';
 import { authApi } from '../../src/api/auth';
 import { safeBack } from '../../src/lib/navigation';
+import { SocialAuthButtons } from '../../src/components/auth/SocialAuthButtons';
 
 export default function LoginScreen() {
   const { t } = useTranslation();
@@ -117,6 +118,8 @@ export default function LoginScreen() {
             loading={isLoading}
             onPress={handleSubmit(onSubmit)}
           />
+
+          <SocialAuthButtons showDivider />
 
           {/* Register link */}
           <View className="flex-row justify-center mt-6">
